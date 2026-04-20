@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BST — DS&A Visual Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root{--bg:#f5f0e8;--surface:#ede8dc;--card:#ffffff;--border:#d4cdc0;--accent:#d46b08;--text:#1a1612;--muted:#7a7060;--mono:'Space Mono',monospace;--sans:'Syne',sans-serif;--error:#cf1322;--warn:#ad6800;--green:#389e0d;--blue:#0958d9;--purple:#531dab;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,0,0,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.05) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:2rem;}
+  nav{display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;font-family:var(--mono);font-size:0.7rem;}
+  nav a{color:var(--muted);text-decoration:none;}nav a:hover{color:var(--accent);}
+  nav .sep{color:var(--border);}nav .cur{color:var(--accent);}
+  .badge{font-family:var(--mono);font-size:0.6rem;color:var(--accent);border:1.5px solid var(--accent);padding:3px 10px;display:inline-block;margin-bottom:0.8rem;letter-spacing:0.2em;}
+  h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-0.03em;color:var(--text);}h1 span{color:var(--accent);}
+  .desc{font-family:var(--mono);font-size:0.75rem;color:var(--muted);margin-top:0.6rem;line-height:1.7;max-width:640px;}
+  .layout{display:grid;grid-template-columns:3fr 2fr;gap:1.5rem;}
+  @media(max-width:768px){.layout{grid-template-columns:1fr;}}
+  .panel{background:var(--card);border:1.5px solid var(--border);padding:1.5rem;}
+  .panel-title{font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;border-bottom:1.5px solid var(--border);padding-bottom:0.8rem;margin-bottom:1.2rem;}
+  #tree-canvas{width:100%;background:var(--surface);border:1.5px solid var(--border);display:block;}
+  input[type=number]{background:var(--surface);border:1.5px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.8rem;padding:0.6rem 0.8rem;outline:none;transition:border-color 0.2s;width:100%;}
+  input:focus{border-color:var(--accent);}
+  .btn{font-family:var(--mono);font-size:0.72rem;padding:0.6rem 1rem;background:transparent;border:1.5px solid var(--accent);color:var(--accent);cursor:pointer;letter-spacing:0.08em;transition:all 0.2s;white-space:nowrap;width:100%;margin-top:0.5rem;}
+  .btn:hover{background:var(--accent);color:#fff;}
+  .btn.danger{border-color:var(--error);color:var(--error);}  .btn.danger:hover{background:var(--error);color:#fff;}
+  .btn.warn{border-color:var(--warn);color:var(--warn);}    .btn.warn:hover{background:var(--warn);color:#fff;}
+  .btn.green{border-color:var(--green);color:var(--green);}  .btn.green:hover{background:var(--green);color:#fff;}
+  .btn.blue{border-color:var(--blue);color:var(--blue);}    .btn.blue:hover{background:var(--blue);color:#fff;}
+  .btn.purple{border-color:var(--purple);color:var(--purple);}  .btn.purple:hover{background:var(--purple);color:#fff;}
+  .log{background:var(--surface);border:1.5px solid var(--border);padding:0.8rem;font-family:var(--mono);font-size:0.68rem;height:130px;overflow-y:auto;line-height:1.8;}
+  .log .ok{color:var(--accent);}.log .err{color:var(--error);}.log .info{color:var(--warn);}
+  .code-block{background:var(--surface);border:1.5px solid var(--border);padding:1.2rem;font-family:var(--mono);font-size:0.64rem;line-height:1.8;overflow-x:auto;white-space:pre;max-height:340px;overflow-y:auto;}
+  .kw{color:#531dab;}.fn{color:#0958d9;}.cm{color:#7a7060;font-style:italic;}.str{color:#389e0d;}.num{color:#d46b08;}
+  .complexity-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:0.68rem;}
+  .complexity-table td,.complexity-table th{padding:0.5rem 0.8rem;border:1px solid var(--border);}
+  .complexity-table th{color:var(--muted);text-align:left;background:var(--surface);}
+  .complexity-table .good{color:#389e0d;}.complexity-table .bad{color:var(--error);}
+  .traversal-out{font-family:var(--mono);font-size:0.72rem;color:var(--accent);background:var(--surface);border:1.5px solid var(--border);padding:0.6rem 0.8rem;min-height:2rem;word-break:break-all;}
+  ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="index.html">DS&A Lab</a><span class="sep">/</span><span class="cur">Binary Search Tree</span></nav>
+  <div style="margin-bottom:2.5rem;">
+    <div class="badge">DATA STRUCTURE // 04</div>
+    <h1>Binary Search Tree <span>ADT</span></h1>
+    <p class="desc">A hierarchical structure where each node has at most two children. The BST invariant: left subtree values &lt; node &lt; right subtree values. Enables O(log n) search, insert &amp; delete on balanced trees.</p>
+  </div>
+  <div class="layout">
+    <div style="display:flex;flex-direction:column;gap:1.5rem;">
+      <div class="panel" style="padding:0;">
+        <div style="padding:1.5rem 1.5rem 0.5rem;" class="panel-title">// Live Tree Visualization</div>
+        <canvas id="tree-canvas" width="640" height="340"></canvas>
+      </div>
+      <div class="panel">
+        <div class="panel-title">// Operations</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+          <div>
+            <input type="number" id="op-val" placeholder="Enter a number..."/>
+            <button class="btn" onclick="doInsert()">insert()</button>
+            <button class="btn warn" onclick="doSearch()">search()</button>
+            <button class="btn danger" onclick="doDelete()">delete()</button>
+          </div>
+          <div>
+            <button class="btn green" style="margin-top:0;" onclick="doInorder()">inorder()</button>
+            <button class="btn blue" onclick="doPreorder()">preorder()</button>
+            <button class="btn purple" onclick="doPostorder()">postorder()</button>
+            <button class="btn" style="border-color:var(--muted);color:var(--muted);" onclick="doClear()">clear()</button>
+          </div>
+        </div>
+        <div style="margin-top:0.8rem;">
+          <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-bottom:4px;">TRAVERSAL OUTPUT:</div>
+          <div class="traversal-out" id="traversal-out">—</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">// Operation Log</div>
+        <div class="log" id="log"><span class="info">→ BST initialized. Ready.</span><br/></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1.5rem;">
+      <div class="panel">
+        <div class="panel-title">// ADT Implementation</div>
+        <div class="code-block"><span class="kw">class</span> <span class="fn">BSTNode</span> {
+  <span class="fn">constructor</span>(val) {
+    <span class="kw">this</span>.val = val;
+    <span class="kw">this</span>.left = <span class="kw">null</span>;
+    <span class="kw">this</span>.right = <span class="kw">null</span>;
+  }
+}
+
+<span class="kw">class</span> <span class="fn">BST</span> {
+  <span class="fn">constructor</span>() { <span class="kw">this</span>.root = <span class="kw">null</span>; }
+
+  <span class="fn">insert</span>(val) {
+    <span class="kw">this</span>.root = <span class="kw">this</span>._insert(<span class="kw">this</span>.root, val);
+  }
+  _insert(node, val) {
+    <span class="kw">if</span> (!node) <span class="kw">return new</span> <span class="fn">BSTNode</span>(val);
+    <span class="kw">if</span> (val < node.val)
+      node.left = <span class="kw">this</span>._insert(node.left, val);
+    <span class="kw">else if</span> (val > node.val)
+      node.right = <span class="kw">this</span>._insert(node.right, val);
+    <span class="kw">return</span> node;
+  }
+
+  <span class="fn">search</span>(val) {
+    <span class="kw">let</span> cur = <span class="kw">this</span>.root;
+    <span class="kw">while</span> (cur) {
+      <span class="kw">if</span> (val === cur.val) <span class="kw">return true</span>;
+      cur = val < cur.val ? cur.left : cur.right;
+    }
+    <span class="kw">return false</span>;
+  }
+
+  <span class="fn">inorder</span>() {
+    <span class="kw">const</span> res = [];
+    <span class="kw">const</span> dfs = n => {
+      <span class="kw">if</span> (!n) <span class="kw">return</span>;
+      dfs(n.left); res.push(n.val); dfs(n.right);
+    };
+    dfs(<span class="kw">this</span>.root);
+    <span class="kw">return</span> res;
+  }
+}</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">// Complexity</div>
+        <table class="complexity-table">
+          <tr><th>Op</th><th>Avg</th><th>Worst</th></tr>
+          <tr><td>insert()</td><td class="good">O(log n)</td><td class="bad">O(n)</td></tr>
+          <tr><td>search()</td><td class="good">O(log n)</td><td class="bad">O(n)</td></tr>
+          <tr><td>delete()</td><td class="good">O(log n)</td><td class="bad">O(n)</td></tr>
+          <tr><td>traversal</td><td class="bad">O(n)</td><td class="bad">O(n)</td></tr>
+        </table>
+        <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-top:0.6rem;">Worst case occurs on a skewed tree (sorted insertion). Use AVL or Red-Black for guaranteed O(log n).</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+class BSTNode{constructor(v){this.val=v;this.left=null;this.right=null;}}
+class BST{
+  constructor(){this.root=null;}
+  insert(v){this.root=this._ins(this.root,v);}
+  _ins(n,v){if(!n)return new BSTNode(v);if(v<n.val)n.left=this._ins(n.left,v);else if(v>n.val)n.right=this._ins(n.right,v);return n;}
+  search(v){let c=this.root;while(c){if(v===c.val)return true;c=v<c.val?c.left:c.right;}return false;}
+  delete(v){this.root=this._del(this.root,v);}
+  _del(n,v){if(!n)return null;if(v<n.val){n.left=this._del(n.left,v);}else if(v>n.val){n.right=this._del(n.right,v);}else{if(!n.left)return n.right;if(!n.right)return n.left;let min=n.right;while(min.left)min=min.left;n.val=min.val;n.right=this._del(n.right,min.val);}return n;}
+  inorder(){const r=[];const d=n=>{if(!n)return;d(n.left);r.push(n.val);d(n.right);};d(this.root);return r;}
+  preorder(){const r=[];const d=n=>{if(!n)return;r.push(n.val);d(n.left);d(n.right);};d(this.root);return r;}
+  postorder(){const r=[];const d=n=>{if(!n)return;d(n.left);d(n.right);r.push(n.val);};d(this.root);return r;}
+  clear(){this.root=null;}
+}
+const bst=new BST();
+const canvas=document.getElementById('tree-canvas');
+const ctx=canvas.getContext('2d');
+const logEl=document.getElementById('log');
+let hlVal=null;
+function log(msg,type='ok'){logEl.innerHTML+=`<span class="${type}">→ ${msg}</span><br/>`;logEl.scrollTop=logEl.scrollHeight;}
+function drawTree(){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#ede8dc';ctx.fillRect(0,0,W,H);
+  if(!bst.root){ctx.fillStyle='#7a7060';ctx.font='12px Space Mono';ctx.textAlign='center';ctx.fillText('Tree is empty',W/2,H/2);return;}
+  function pos(node,depth,left,right){if(!node)return;const x=(left+right)/2,y=40+depth*65;node._x=x;node._y=y;pos(node.left,depth+1,left,(left+right)/2);pos(node.right,depth+1,(left+right)/2,right);}
+  pos(bst.root,0,0,W);
+  function edges(node){if(!node)return;if(node.left){ctx.beginPath();ctx.moveTo(node._x,node._y);ctx.lineTo(node.left._x,node.left._y);ctx.strokeStyle='#d4cdc0';ctx.lineWidth=1.5;ctx.stroke();edges(node.left);}if(node.right){ctx.beginPath();ctx.moveTo(node._x,node._y);ctx.lineTo(node.right._x,node.right._y);ctx.strokeStyle='#d4cdc0';ctx.lineWidth=1.5;ctx.stroke();edges(node.right);}}
+  edges(bst.root);
+  function nodes(node){if(!node)return;const isHL=hlVal!==null&&node.val===hlVal,isRoot=node===bst.root;ctx.beginPath();ctx.arc(node._x,node._y,20,0,Math.PI*2);if(isHL){ctx.fillStyle='rgba(212,107,8,0.18)';}else if(isRoot){ctx.fillStyle='rgba(212,107,8,0.08)';}else{ctx.fillStyle='rgba(212,107,8,0.04)';}ctx.fill();ctx.strokeStyle=isHL?'#d46b08':isRoot?'#d46b08':'rgba(212,107,8,0.5)';ctx.lineWidth=isHL||isRoot?2:1;ctx.stroke();ctx.fillStyle=isHL?'#d46b08':'#1a1612';ctx.font='bold 12px Space Mono';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(node.val,node._x,node._y);nodes(node.left);nodes(node.right);}
+  nodes(bst.root);
+}
+function doInsert(){const v=parseInt(document.getElementById('op-val').value);if(isNaN(v)){log('Enter a number','err');return;}bst.insert(v);document.getElementById('op-val').value='';hlVal=v;drawTree();setTimeout(()=>{hlVal=null;drawTree();},1000);log(`insert(${v}) complete`);}
+function doSearch(){const v=parseInt(document.getElementById('op-val').value);if(isNaN(v)){log('Enter a number','err');return;}const found=bst.search(v);if(found){hlVal=v;drawTree();setTimeout(()=>{hlVal=null;drawTree();},1200);}log(found?`search(${v}) → FOUND`:`search(${v}) → NOT FOUND`,found?'info':'err');}
+function doDelete(){const v=parseInt(document.getElementById('op-val').value);if(isNaN(v)){log('Enter a number','err');return;}const found=bst.search(v);bst.delete(v);drawTree();log(found?`delete(${v}) → removed`:`delete(${v}) → not found`,found?'ok':'err');}
+function doInorder(){const r=bst.inorder();document.getElementById('traversal-out').textContent=r.length?r.join(' → '):'empty';log(`inorder: [${r.join(', ')}]`,'info');}
+function doPreorder(){const r=bst.preorder();document.getElementById('traversal-out').textContent=r.length?r.join(' → '):'empty';log(`preorder: [${r.join(', ')}]`,'info');}
+function doPostorder(){const r=bst.postorder();document.getElementById('traversal-out').textContent=r.length?r.join(' → '):'empty';log(`postorder: [${r.join(', ')}]`,'info');}
+function doClear(){bst.clear();drawTree();document.getElementById('traversal-out').textContent='—';log('Tree cleared','info');}
+document.getElementById('op-val').addEventListener('keydown',e=>{if(e.key==='Enter')doInsert();});
+[50,30,70,20,40,60,80].forEach(v=>bst.insert(v));drawTree();log('Tree seeded with: 50, 30, 70, 20, 40, 60, 80','info');
+</script>
+</body>
+</html>

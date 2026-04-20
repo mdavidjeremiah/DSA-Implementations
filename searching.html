@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Searching — DS&A Visual Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root{--bg:#f5f0e8;--surface:#ede8dc;--card:#ffffff;--border:#d4cdc0;--accent:#ad6800;--text:#1a1612;--muted:#7a7060;--mono:'Space Mono',monospace;--sans:'Syne',sans-serif;--error:#cf1322;--warn:#d46b08;--green:#389e0d;--blue:#0958d9;--purple:#531dab;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,0,0,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.05) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+  .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:2rem;}
+  nav{display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;font-family:var(--mono);font-size:0.7rem;}
+  nav a{color:var(--muted);text-decoration:none;}nav a:hover{color:var(--accent);}
+  nav .sep{color:var(--border);}nav .cur{color:var(--accent);}
+  .badge{font-family:var(--mono);font-size:0.6rem;color:var(--accent);border:1.5px solid var(--accent);padding:3px 10px;display:inline-block;margin-bottom:0.8rem;letter-spacing:0.2em;}
+  h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-0.03em;color:var(--text);}h1 span{color:var(--accent);}
+  .desc{font-family:var(--mono);font-size:0.75rem;color:var(--muted);margin-top:0.6rem;line-height:1.7;max-width:640px;}
+  .panel{background:var(--card);border:1.5px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;}
+  .panel-title{font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;border-bottom:1.5px solid var(--border);padding-bottom:0.8rem;margin-bottom:1.2rem;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+  @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+
+  .array-display{display:flex;flex-wrap:wrap;gap:4px;padding:1rem 0;min-height:70px;align-items:center;}
+  .arr-cell{width:48px;height:48px;border:1.5px solid var(--border);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);transition:all 0.25s;position:relative;}
+  .arr-cell .cv{font-size:0.85rem;font-weight:700;color:var(--text);}
+  .arr-cell .ci{font-size:0.5rem;color:var(--muted);margin-top:2px;}
+  .arr-cell.current{border-color:var(--accent);background:rgba(173,104,0,0.1);}
+  .arr-cell.current .cv{color:var(--accent);}
+  .arr-cell.found{border-color:var(--green);background:rgba(56,158,13,0.12);}
+  .arr-cell.found .cv{color:var(--green);}
+  .arr-cell.eliminated{opacity:0.25;}
+  .arr-cell.low{border-top:2.5px solid var(--blue);}
+  .arr-cell.high{border-bottom:2.5px solid var(--error);}
+  .arr-cell.mid{border-color:var(--accent);background:rgba(173,104,0,0.08);}
+  .arr-cell.mid .cv{color:var(--accent);}
+  .ptr-label{position:absolute;top:-20px;font-family:var(--mono);font-size:0.5rem;color:var(--accent);letter-spacing:0.1em;}
+
+  input[type=number]{background:var(--surface);border:1.5px solid var(--border);color:var(--text);font-family:var(--mono);font-size:0.8rem;padding:0.6rem 0.8rem;outline:none;transition:border-color 0.2s;}
+  input:focus{border-color:var(--accent);}
+  .btn{font-family:var(--mono);font-size:0.72rem;padding:0.6rem 1rem;background:transparent;border:1.5px solid var(--accent);color:var(--accent);cursor:pointer;letter-spacing:0.08em;transition:all 0.2s;white-space:nowrap;}
+  .btn:hover{background:var(--accent);color:#fff;}
+  .btn.b{border-color:var(--blue);color:var(--blue);}  .btn.b:hover{background:var(--blue);color:#fff;}
+  .btn.g{border-color:var(--green);color:var(--green);}  .btn.g:hover{background:var(--green);color:#fff;}
+  .input-row{display:flex;gap:0.6rem;margin-bottom:0.8rem;flex-wrap:wrap;}
+  .status-bar{font-family:var(--mono);font-size:0.72rem;background:var(--surface);border:1.5px solid var(--border);padding:0.6rem 0.8rem;min-height:2rem;color:var(--muted);}
+  .status-bar span{color:var(--accent);}
+  .step-log{background:var(--surface);border:1.5px solid var(--border);padding:0.8rem;font-family:var(--mono);font-size:0.66rem;height:110px;overflow-y:auto;line-height:1.9;}
+  .step-log .step{color:var(--muted);}.step-log .hit{color:var(--green);}.step-log .miss{color:var(--error);}
+  .code-block{background:var(--surface);border:1.5px solid var(--border);padding:1.2rem;font-family:var(--mono);font-size:0.68rem;line-height:1.8;overflow-x:auto;white-space:pre;}
+  .kw{color:#531dab;}.fn{color:#0958d9;}.cm{color:#7a7060;font-style:italic;}.str{color:#389e0d;}.num{color:#d46b08;}
+  .complexity-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:0.68rem;}
+  .complexity-table td,.complexity-table th{padding:0.5rem 0.8rem;border:1px solid var(--border);}
+  .complexity-table th{color:var(--muted);text-align:left;background:var(--surface);}
+  .complexity-table .good{color:#389e0d;}.complexity-table .bad{color:var(--error);}
+  ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="index.html">DS&A Lab</a><span class="sep">/</span><span class="cur">Searching Algorithms</span></nav>
+  <div style="margin-bottom:2.5rem;">
+    <div class="badge">ALGORITHMS // 06</div>
+    <h1>Searching <span>Algorithms</span></h1>
+    <p class="desc">Step through Linear Search (O(n)) and Binary Search (O(log n)). Linear scan works on any array; Binary requires a sorted array and uses divide-and-conquer to halve the search space each step.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">// Linear Search — O(n)</div>
+    <div class="input-row">
+      <input type="number" id="ls-target" placeholder="Target value..." style="width:160px;"/>
+      <button class="btn" onclick="startLinear()">▶ Search</button>
+      <button class="btn b" onclick="resetLinear()">Reset</button>
+      <button class="btn g" onclick="generateLinear()">New Array</button>
+    </div>
+    <div class="array-display" id="ls-array"></div>
+    <div class="status-bar" id="ls-status">Enter a target and press Search</div>
+    <div style="margin-top:0.8rem;" class="step-log" id="ls-log"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">// Binary Search — O(log n) — Requires sorted array</div>
+    <div class="input-row">
+      <input type="number" id="bs-target" placeholder="Target value..." style="width:160px;"/>
+      <button class="btn" onclick="startBinary()">▶ Search</button>
+      <button class="btn b" onclick="resetBinary()">Reset</button>
+      <button class="btn g" onclick="generateBinary()">New Array</button>
+    </div>
+    <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-bottom:0.5rem;">
+      <span style="color:var(--blue)">▲ LOW</span> &nbsp;|&nbsp; <span style="color:var(--accent)">◆ MID (compared)</span> &nbsp;|&nbsp; <span style="color:var(--error)">▼ HIGH</span>
+    </div>
+    <div class="array-display" id="bs-array"></div>
+    <div class="status-bar" id="bs-status">Enter a target and press Search</div>
+    <div style="margin-top:0.8rem;" class="step-log" id="bs-log"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">// Linear Search Code</div>
+      <div class="code-block"><span class="kw">function</span> <span class="fn">linearSearch</span>(arr, target) {
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < arr.length; i++) {
+    <span class="cm">// Check each element one by one</span>
+    <span class="kw">if</span> (arr[i] === target) {
+      <span class="kw">return</span> i; <span class="cm">// Found at index i</span>
+    }
+  }
+  <span class="kw">return</span> -<span class="num">1</span>; <span class="cm">// Not found</span>
+}
+
+<span class="cm">/* Works on UNSORTED arrays.
+   Scans left → right until
+   found or end is reached. */</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">// Binary Search Code</div>
+      <div class="code-block"><span class="kw">function</span> <span class="fn">binarySearch</span>(arr, target) {
+  <span class="kw">let</span> low = <span class="num">0</span>, high = arr.length - <span class="num">1</span>;
+  <span class="kw">while</span> (low <= high) {
+    <span class="kw">const</span> mid = Math.<span class="fn">floor</span>((low+high) / <span class="num">2</span>);
+    <span class="kw">if</span> (arr[mid] === target) <span class="kw">return</span> mid;
+    <span class="kw">else if</span> (arr[mid] < target) low = mid + <span class="num">1</span>;
+    <span class="kw">else</span> high = mid - <span class="num">1</span>;
+  }
+  <span class="kw">return</span> -<span class="num">1</span>; <span class="cm">// Not found</span>
+}
+
+<span class="cm">/* Requires SORTED array.
+   Halves search space per step. */</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">// Complexity Comparison</div>
+    <table class="complexity-table">
+      <tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Requires</th></tr>
+      <tr><td>Linear Search</td><td class="good">O(1)</td><td class="bad">O(n)</td><td class="bad">O(n)</td><td>Nothing (unsorted OK)</td></tr>
+      <tr><td>Binary Search</td><td class="good">O(1)</td><td class="good">O(log n)</td><td class="good">O(log n)</td><td>Sorted array</td></tr>
+    </table>
+  </div>
+</div>
+<script>
+let lsArr=[],bsArr=[],lsRunning=false,bsRunning=false;
+function randArr(n,max,sorted){const a=Array.from({length:n},()=>Math.floor(Math.random()*max)+1);return sorted?[...new Set(a)].sort((x,y)=>x-y).slice(0,n):a;}
+function renderArr(id,arr,hl={}){
+  const el=document.getElementById(id);el.innerHTML='';
+  arr.forEach((v,i)=>{
+    const cell=document.createElement('div');
+    cell.className='arr-cell'+(hl.current===i?' current':'')+(hl.found===i?' found':'')+(hl.eliminated&&hl.eliminated.includes(i)?' eliminated':'')+(hl.low===i?' low':'')+(hl.high===i?' high':'')+(hl.mid===i?' mid':'');
+    let ptrs='';
+    if(hl.low===i)ptrs+=`<span class="ptr-label" style="color:#0958d9">LOW</span>`;
+    if(hl.high===i)ptrs+=`<span class="ptr-label" style="color:#cf1322;top:auto;bottom:-20px">HIGH</span>`;
+    if(hl.mid===i)ptrs+=`<span class="ptr-label">MID</span>`;
+    cell.innerHTML=`${ptrs}<span class="cv">${v}</span><span class="ci">${i}</span>`;
+    el.appendChild(cell);
+  });
+}
+function slog(id,msg,cls='step'){const el=document.getElementById(id);el.innerHTML+=`<span class="${cls}">${msg}</span><br/>`;el.scrollTop=el.scrollHeight;}
+function generateLinear(){lsArr=randArr(14,99,false);renderArr('ls-array',lsArr);document.getElementById('ls-status').innerHTML='Array ready';document.getElementById('ls-log').innerHTML='';}
+function generateBinary(){bsArr=randArr(14,99,true);renderArr('bs-array',bsArr);document.getElementById('bs-status').innerHTML='Sorted array ready';document.getElementById('bs-log').innerHTML='';}
+function resetLinear(){renderArr('ls-array',lsArr);document.getElementById('ls-status').innerHTML='Cleared';document.getElementById('ls-log').innerHTML='';}
+function resetBinary(){renderArr('bs-array',bsArr);document.getElementById('bs-status').innerHTML='Cleared';document.getElementById('bs-log').innerHTML='';}
+async function startLinear(){
+  if(lsRunning||!lsArr.length)return;
+  const target=parseInt(document.getElementById('ls-target').value);if(isNaN(target)){document.getElementById('ls-status').textContent='Enter a target value';return;}
+  lsRunning=true;document.getElementById('ls-log').innerHTML='';
+  for(let i=0;i<lsArr.length;i++){
+    renderArr('ls-array',lsArr,{current:i});
+    document.getElementById('ls-status').innerHTML=`Checking index <span>${i}</span> → value <span>${lsArr[i]}</span>`;
+    slog('ls-log',`Step ${i+1}: arr[${i}] = ${lsArr[i]} ${lsArr[i]===target?'== TARGET ✓':'≠ '+target}`);
+    await delay(500);
+    if(lsArr[i]===target){renderArr('ls-array',lsArr,{found:i});document.getElementById('ls-status').innerHTML=`✓ Found <span>${target}</span> at index <span>${i}</span> in ${i+1} step(s)`;slog('ls-log',`✓ FOUND at index ${i}`,'hit');lsRunning=false;return;}
+  }
+  renderArr('ls-array',lsArr,{eliminated:lsArr.map((_,i)=>i)});
+  document.getElementById('ls-status').innerHTML=`✗ <span>${target}</span> not found — scanned all ${lsArr.length} elements`;
+  slog('ls-log',`✗ Not found after ${lsArr.length} comparisons`,'miss');lsRunning=false;
+}
+async function startBinary(){
+  if(bsRunning||!bsArr.length)return;
+  const target=parseInt(document.getElementById('bs-target').value);if(isNaN(target)){document.getElementById('bs-status').textContent='Enter a target value';return;}
+  bsRunning=true;document.getElementById('bs-log').innerHTML='';
+  let low=0,high=bsArr.length-1,step=0;const eliminated=[];
+  while(low<=high){
+    step++;const mid=Math.floor((low+high)/2);
+    renderArr('bs-array',bsArr,{low,high,mid,eliminated:[...eliminated]});
+    document.getElementById('bs-status').innerHTML=`Step ${step}: low=<span>${low}</span> mid=<span>${mid}</span> high=<span>${high}</span> → arr[mid]=<span>${bsArr[mid]}</span>`;
+    slog('bs-log',`Step ${step}: arr[${mid}]=${bsArr[mid]} vs target=${target}`);
+    await delay(700);
+    if(bsArr[mid]===target){renderArr('bs-array',bsArr,{found:mid,eliminated:[...eliminated]});document.getElementById('bs-status').innerHTML=`✓ Found <span>${target}</span> at index <span>${mid}</span> in ${step} step(s)`;slog('bs-log',`✓ FOUND at index ${mid} in ${step} step(s)`,'hit');bsRunning=false;return;}
+    else if(bsArr[mid]<target){for(let i=low;i<=mid;i++)eliminated.push(i);low=mid+1;slog('bs-log',`  → ${bsArr[mid]} < ${target}: search RIGHT half`);}
+    else{for(let i=mid;i<=high;i++)eliminated.push(i);high=mid-1;slog('bs-log',`  → ${bsArr[mid]} > ${target}: search LEFT half`);}
+    await delay(300);
+  }
+  document.getElementById('bs-status').innerHTML=`✗ <span>${target}</span> not found after <span>${step}</span> comparisons`;
+  slog('bs-log',`✗ Not found after ${step} comparisons`,'miss');bsRunning=false;
+}
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+generateLinear();generateBinary();
+</script>
+</body>
+</html>

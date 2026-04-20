@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DS&A Visual Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #f5f0e8; 
+    --surface: #ede8dc; 
+    --card: #ffffff; 
+    --border: #d4cdc0;
+    --text: #1a1612; 
+    --muted: #7a7060;
+    --red: #d4380d; 
+    --blue: #0958d9; 
+    --purple: #531dab; 
+    --orange: #d46b08;
+    --pink: #c41d7f; 
+    --gold: #ad6800; 
+    --green: #389e0d;
+    --mono: 'Space Mono', monospace; --sans: 'Syne', sans-serif;
+
+    --transition-fast: 0.15s ease;
+    --transition-medium: 0.25s ease;
+    --transition-slow: 0.35s ease;
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      --font-scale: 0.9;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :root {
+      --font-scale: 0.8;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: calc(16px * var(--font-scale, 1));
+}
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(20px, 20px); }
+    100% { transform: translate(0, 0); }
+  }
+  .container { 
+    position: relative; 
+    z-index: 1; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 2rem; 
+  }
+
+  header { 
+    padding: 3rem 0 2rem; 
+    border-bottom: 1.5px solid var(--border); 
+    margin-bottom: 4rem; 
+    animation: headerFade 1.5s ease-out; 
+  }
+
+  @keyframes headerFade {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .header-inner {
+    display: flex; 
+    align-items: flex-end; 
+    justify-content: space-between; 
+    flex-wrap: wrap; 
+    gap: 1.5rem; 
+  }
+  .badge { 
+    font-family: var(--mono); 
+    font-size: 0.65rem; 
+    color: var(--red); 
+    letter-spacing: 0.2em; 
+    text-transform: uppercase; 
+    border: 1.5px solid var(--red); 
+    padding: 3px 10px; 
+    display: inline-block; 
+    margin-bottom: 1rem; 
+  }
+
+  h1 { 
+    font-size: clamp(2.5rem, 6vw, 4.5rem); 
+    font-weight: 800; 
+    line-height: 0.95; 
+    letter-spacing: -0.03em; 
+    color: var(--text); 
+  }
+
+  h1 span.accent { 
+    color: var(--red); 
+  }
+  .subtitle { 
+    font-family: var(--mono); 
+    font-size: 0.8rem; 
+    color: var(--muted); 
+    margin-top: 1rem; 
+    letter-spacing: 0.05em; 
+  }
+  .stats { 
+    display: flex; 
+    gap: 2rem; 
+    font-family: var(--mono); 
+  }
+  .stat { 
+    text-align: right; 
+  }
+  .stat-num { 
+    font-size: 2rem; 
+    font-weight: 700; 
+    color: var(--red); 
+    line-height: 1; 
+  }
+  .stat-label { 
+    font-size: 0.65rem; 
+    color: var(--muted); 
+    letter-spacing: 0.1em; 
+    text-transform: uppercase; 
+    margin-top: 4px; 
+  }
+  .section-label { 
+    font-family: var(--mono); 
+    font-size: 0.65rem; 
+    letter-spacing: 0.25em; 
+    text-transform: uppercase; 
+    color: var(--muted); 
+    margin-bottom: 1.5rem; 
+    display: flex; 
+    align-items: center; 
+    gap: 1rem; 
+  }
+  .section-label::after {
+    content: ''; 
+    flex: 1; 
+    height: 1.5px; 
+    background: var(--border); 
+  }
+  .cards-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+    gap: 15px; 
+    margin-bottom: 0.5rem; 
+    background: var(--border); 
+    border: 1.5px solid var(--border); 
+  }
+  .card {
+    background: var(--card);
+    padding: 2rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-medium);
+    animation: fadeUp 0.5s ease both;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s ease;
+  }
+  .card:hover {
+    background: var(--surface);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+  .card:hover::before { 
+    transform: scaleY(1); 
+  }
+  .card:hover .card-arrow {
+    transform: translate(4px, -4px); 
+    opacity: 1; 
+  }
+  .card:hover .card-icon { 
+    transform: scale(1.1); 
+  }
+  .card-top { 
+    display: flex; 
+    align-items: flex-start; 
+    justify-content: space-between; 
+    margin-bottom: 1.5rem; 
+  }
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border: 1.5px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    transition: transform var(--transition-fast);
+    color: var(--accent);
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+  }
+  .card-tag {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    padding: 3px 8px;
+    opacity: 0.85;
+    border-radius: 4px;
+    transition: all var(--transition-fast);
+  }
+  .card-tag:hover {
+    background: var(--accent);
+    color: white;
+  }
+  .card-arrow {
+    font-size: 1.2rem;
+    color: var(--accent);
+    opacity: 0;
+    transition: transform var(--transition-medium), opacity var(--transition-medium);
+    margin-left: auto;
+  }
+  .card h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+    color: var(--text);
+    transition: color var(--transition-fast);
+  }
+  .card h3:hover { color: var(--accent); }
+  .card p {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  .card-ops { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 6px; 
+  }
+  .op-chip {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    padding: 3px 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    transition: all var(--transition-fast);
+  }
+  .op-chip:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .op-chip.highlight {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,0,0,0.02);
+  }
+  footer { 
+    margin-top: 5rem; 
+    padding: 2rem 0; 
+    border-top: 1.5px solid var(--border); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    gap: 1rem; 
+  }
+  footer .mono { 
+    font-family: var(--mono); 
+    font-size: 0.7rem; 
+    color: var(--muted); 
+  }
+  footer .mono span { 
+    color: var(--red); 
+  }
+
+  @keyframes fadeUp { 
+    from { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    } 
+    to {
+      opacity: 1; 
+      transform: translateY(0); 
+    } 
+  }
+  .card { 
+    animation: fadeUp 0.5s ease both; 
+  }
+  .card:nth-child(1){
+    animation-delay:.05s} .card:nth-child(2){animation-delay:.1s} .card:nth-child(3){animation-delay:.15s}
+  .card:nth-child(4){animation-delay:.2s} .card:nth-child(5){animation-delay:.25s} .card:nth-child(6){animation-delay:.3s} .card:nth-child(7){animation-delay:.35s}
+  ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--border)}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="header-inner">
+      <div>
+        <div class="badge">// interactive reference</div>
+        <h1>Data Structures<br/>&amp; <span class="accent">Algorithms</span></h1>
+        <p class="subtitle">$ visual_lab --interactive --animated --annotated</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-num">6</div><div class="stat-label">structures</div></div>
+        <div class="stat"><div class="stat-num">8</div><div class="stat-label">algorithms</div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="section-label">01 — Data Structures</div>
+  <div class="cards-grid">
+    <a href="stack.html" class="card" style="--accent:var(--red)">
+      <div class="card-top"><div class="card-icon">1</div><div class="card-tag">LIFO</div><div class="card-arrow">↗</div></div>
+      <h3>Stack</h3>
+      <p>Last-In First-Out linear structure. Push &amp; pop from the same end. Powers undo, recursion &amp; expression parsing.</p>
+      <div class="card-ops"><span class="op-chip highlight">push()</span><span class="op-chip highlight">pop()</span><span class="op-chip highlight">peek()</span><span class="op-chip">isEmpty()</span><span class="op-chip">size()</span></div>
+    </a>
+    <a href="queue.html" class="card" style="--accent:var(--blue)">
+      <div class="card-top"><div class="card-icon">2</div><div class="card-tag">FIFO</div><div class="card-arrow">↗</div></div>
+      <h3>Queue</h3>
+      <p>First-In First-Out structure. Enqueue at rear, dequeue from front. Used in BFS, scheduling &amp; buffers.</p>
+      <div class="card-ops"><span class="op-chip highlight">enqueue()</span><span class="op-chip highlight">dequeue()</span><span class="op-chip highlight">front()</span><span class="op-chip">isEmpty()</span><span class="op-chip">size()</span></div>
+    </a>
+    <a href="linked-list.html" class="card" style="--accent:var(--purple)">
+      <div class="card-top"><div class="card-icon">3</div><div class="card-tag">LINEAR</div><div class="card-arrow">↗</div></div>
+      <h3>Linked List</h3>
+      <p>Nodes connected by pointers. Dynamic size, O(1) insertion at head, sequential traversal. Singly &amp; doubly linked.</p>
+      <div class="card-ops"><span class="op-chip highlight">insertHead()</span><span class="op-chip highlight">insertTail()</span><span class="op-chip highlight">delete()</span><span class="op-chip">search()</span><span class="op-chip">traverse()</span></div>
+    </a>
+    <a href="tree.html" class="card" style="--accent:var(--orange)">
+      <div class="card-top"><div class="card-icon">4</div><div class="card-tag">HIERARCHICAL</div><div class="card-arrow">↗</div></div>
+      <h3>Binary Search Tree</h3>
+      <p>Hierarchical node structure. Left &lt; root &lt; right invariant. O(log n) search, insert &amp; delete on balanced trees.</p>
+      <div class="card-ops"><span class="op-chip highlight">insert()</span><span class="op-chip highlight">search()</span><span class="op-chip highlight">delete()</span><span class="op-chip">inorder()</span><span class="op-chip">height()</span></div>
+    </a>
+    <a href="graph.html" class="card" style="--accent:var(--pink)">
+      <div class="card-top"><div class="card-icon">5</div><div class="card-tag">NON-LINEAR</div><div class="card-arrow">↗</div></div>
+      <h3>Graph</h3>
+      <p>Vertices connected by edges. Directed &amp; undirected. Adjacency list representation. BFS and DFS traversal built in.</p>
+      <div class="card-ops"><span class="op-chip highlight">addVertex()</span><span class="op-chip highlight">addEdge()</span><span class="op-chip highlight">BFS()</span><span class="op-chip">DFS()</span><span class="op-chip">removeEdge()</span></div>
+    </a>
+  </div>
+
+  <div class="section-label" style="margin-top:3rem;">02 — Searching &amp; Sorting Algorithms</div>
+  <div class="cards-grid">
+    <a href="searching.html" class="card" style="--accent:var(--gold)">
+      <div class="card-top"><div class="card-icon">6</div><div class="card-tag">SEARCHING</div><div class="card-arrow">↗</div></div>
+      <h3>Searching Algorithms</h3>
+      <p>Linear O(n) vs Binary O(log n) search. Step-by-step animations showing comparisons &amp; index tracking.</p>
+      <div class="card-ops"><span class="op-chip highlight">linearSearch()</span><span class="op-chip highlight">binarySearch()</span></div>
+    </a>
+    <a href="sorting.html" class="card" style="--accent:var(--green)">
+      <div class="card-top"><div class="card-icon">7</div><div class="card-tag">SORTING</div><div class="card-arrow">↗</div></div>
+      <h3>Sorting Algorithms</h3>
+      <p>Bubble, Selection, Insertion, Merge &amp; Quick Sort visualized with bar charts. Compare speeds &amp; trace operations.</p>
+      <div class="card-ops"><span class="op-chip highlight">bubbleSort()</span><span class="op-chip highlight">mergeSort()</span><span class="op-chip highlight">quickSort()</span><span class="op-chip">insertionSort()</span><span class="op-chip">selectionSort()</span></div>
+    </a>
+  </div>
+
+  <footer>
+    <!-- <div class="mono">DS&amp;A Visual Lab &nbsp;·&nbsp; <span>Interactive Reference</span></div> -->
+    <div class="mono">&copy;<span>LitmusTech Solutions</span> 2026</div>
+  </footer>
+</div>
+</body>
+</html>
