@@ -6,71 +6,19 @@
 <title>Sorting — DS&A Visual Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
-<style>
-  :root{--bg:#f5f0e8;--surface:#ede8dc;--card:#ffffff;--border:#d4cdc0;--accent:#389e0d;--text:#1a1612;--muted:#7a7060;--mono:'Space Mono',monospace;--sans:'Syne',sans-serif;--error:#cf1322;--warn:#d46b08;--blue:#0958d9;--purple:#531dab;--pink:#c41d7f;}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
-  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,0,0,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.05) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
-  .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:2rem;}
-  nav{display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;font-family:var(--mono);font-size:0.7rem;}
-  nav a{color:var(--muted);text-decoration:none;}nav a:hover{color:var(--accent);}
-  nav .sep{color:var(--border);}nav .cur{color:var(--accent);}
-  .badge{font-family:var(--mono);font-size:0.6rem;color:var(--accent);border:1.5px solid var(--accent);padding:3px 10px;display:inline-block;margin-bottom:0.8rem;letter-spacing:0.2em;}
-  h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-0.03em;color:var(--text);}h1 span{color:var(--accent);}
-  .desc{font-family:var(--mono);font-size:0.75rem;color:var(--muted);margin-top:0.6rem;line-height:1.7;max-width:640px;}
-  .panel{background:var(--card);border:1.5px solid var(--border);padding:1.5rem;}
-  .panel-title{font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;border-bottom:1.5px solid var(--border);padding-bottom:0.8rem;margin-bottom:1.2rem;}
-
-  .bar-chart{display:flex;align-items:flex-end;gap:3px;height:200px;padding:0 4px;background:var(--surface);border:1.5px solid var(--border);}
-  .bar{flex:1;min-width:8px;transition:height 0.12s ease,background 0.12s ease;}
-  .bar.normal{background:rgba(56,158,13,0.35);}
-  .bar.comparing{background:#d46b08;}
-  .bar.swapping{background:#cf1322;}
-  .bar.pivot{background:#0958d9;}
-  .bar.sorted{background:rgba(56,158,13,0.7);}
-  .bar.merging{background:#531dab;}
-
-  .sort-controls{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem;}
-  .algo-btn{font-family:var(--mono);font-size:0.7rem;padding:0.5rem 0.9rem;background:transparent;border:1.5px solid var(--border);color:var(--muted);cursor:pointer;letter-spacing:0.05em;transition:all 0.2s;}
-  .algo-btn:hover,.algo-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(56,158,13,0.05);}
-  .btn{font-family:var(--mono);font-size:0.72rem;padding:0.6rem 1.2rem;background:transparent;border:1.5px solid var(--accent);color:var(--accent);cursor:pointer;letter-spacing:0.08em;transition:all 0.2s;}
-  .btn:hover{background:var(--accent);color:#fff;}
-  .btn.secondary{border-color:var(--blue);color:var(--blue);}  .btn.secondary:hover{background:var(--blue);color:#fff;}
-  .btn.danger{border-color:var(--error);color:var(--error);}   .btn.danger:hover{background:var(--error);color:#fff;}
-  .speed-row{display:flex;align-items:center;gap:0.8rem;font-family:var(--mono);font-size:0.65rem;color:var(--muted);}
-  input[type=range]{accent-color:var(--accent);flex:1;max-width:120px;}
-  .status-bar{font-family:var(--mono);font-size:0.72rem;background:var(--surface);border:1.5px solid var(--border);padding:0.6rem 0.8rem;color:var(--muted);margin-top:0.8rem;}
-  .status-bar span{color:var(--accent);}
-  .stats-row{display:flex;gap:1.5rem;margin-top:0.6rem;}
-  .stat{font-family:var(--mono);font-size:0.65rem;}
-  .stat-n{font-size:1.1rem;font-weight:700;color:var(--accent);}
-  .stat-l{color:var(--muted);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;}
-
-  .algo-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.5px;background:var(--border);border:1.5px solid var(--border);margin-top:1.5rem;}
-  .algo-card{background:var(--card);padding:1rem;font-family:var(--mono);}
-  .ac-name{font-size:0.72rem;color:var(--accent);font-weight:700;margin-bottom:0.5rem;}
-  .ac-row{display:flex;justify-content:space-between;font-size:0.6rem;color:var(--muted);margin:2px 0;}
-  .ac-val{color:var(--text);}
-  .ac-val.good{color:#389e0d;}
-  .ac-val.ok{color:#d46b08;}
-  .ac-val.bad{color:#cf1322;}
-
-  .code-block{background:var(--surface);border:1.5px solid var(--border);padding:1.2rem;font-family:var(--mono);font-size:0.65rem;line-height:1.8;overflow-x:auto;white-space:pre;max-height:260px;overflow-y:auto;margin-top:1rem;}
-  .kw{color:#531dab;}.fn{color:#0958d9;}.cm{color:#7a7060;font-style:italic;}.str{color:#389e0d;}.num{color:#d46b08;}
-  ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);}
-</style>
+<link rel="stylesheet" href="/styles/sorting.css">
 </head>
 <body>
 <div class="wrap">
   <nav><a href="index.html">DS&A Lab</a><span class="sep">/</span><span class="cur">Sorting Algorithms</span></nav>
   <div style="margin-bottom:2.5rem;">
-    <div class="badge">ALGORITHMS // 07</div>
+    <div class="badge">ALGORITHMS  07</div>
     <h1>Sorting <span>Algorithms</span></h1>
     <p class="desc">Animated bar chart visualization for Bubble, Selection, Insertion, Merge and Quick Sort. Watch comparisons and swaps in real time. Orange = comparing, Red = swapping, Green = sorted.</p>
   </div>
 
   <div class="panel">
-    <div class="panel-title">// Choose Algorithm &amp; Visualize</div>
+    <div class="panel-title"> Choose Algorithm &amp; Visualize</div>
     <div class="sort-controls">
       <button class="algo-btn active" id="btn-bubble" onclick="selectAlgo('bubble')">Bubble Sort</button>
       <button class="algo-btn" id="btn-selection" onclick="selectAlgo('selection')">Selection Sort</button>
@@ -107,90 +55,51 @@
     <div class="code-block" id="code-display"></div>
   </div>
 </div>
-<script>
-let arr=[],N=25,running=false,stopFlag=false,comparisons=0,swaps=0,currentAlgo='bubble';
-const CODES={
-bubble:`<span class="kw">async function</span> <span class="fn">bubbleSort</span>(arr) {
-  <span class="kw">const</span> n = arr.length;
-  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < n - <span class="num">1</span>; i++) {
-    <span class="kw">let</span> swapped = <span class="kw">false</span>;
-    <span class="kw">for</span> (<span class="kw">let</span> j = <span class="num">0</span>; j < n - i - <span class="num">1</span>; j++) {
-      <span class="kw">if</span> (arr[j] > arr[j + <span class="num">1</span>]) {
-        [arr[j], arr[j+<span class="num">1</span>]] = [arr[j+<span class="num">1</span>], arr[j]];
-        swapped = <span class="kw">true</span>;
-      }
-    }
-    <span class="kw">if</span> (!swapped) <span class="kw">break</span>; <span class="cm">// Early exit</span>
-  }
-}`,
-selection:`<span class="kw">async function</span> <span class="fn">selectionSort</span>(arr) {
-  <span class="kw">const</span> n = arr.length;
-  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < n - <span class="num">1</span>; i++) {
-    <span class="kw">let</span> minIdx = i;
-    <span class="kw">for</span> (<span class="kw">let</span> j = i + <span class="num">1</span>; j < n; j++) {
-      <span class="kw">if</span> (arr[j] < arr[minIdx]) minIdx = j;
-    }
-    [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
-  }
-}`,
-insertion:`<span class="kw">async function</span> <span class="fn">insertionSort</span>(arr) {
-  <span class="kw">const</span> n = arr.length;
-  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">1</span>; i < n; i++) {
-    <span class="kw">const</span> key = arr[i];
-    <span class="kw">let</span> j = i - <span class="num">1</span>;
-    <span class="kw">while</span> (j >= <span class="num">0</span> && arr[j] > key) {
-      arr[j + <span class="num">1</span>] = arr[j]; j--;
-    }
-    arr[j + <span class="num">1</span>] = key;
-  }
-}`,
-merge:`<span class="kw">function</span> <span class="fn">mergeSort</span>(arr) {
-  <span class="kw">if</span> (arr.length <= <span class="num">1</span>) <span class="kw">return</span> arr;
-  <span class="kw">const</span> mid = Math.<span class="fn">floor</span>(arr.length / <span class="num">2</span>);
-  <span class="kw">return</span> <span class="fn">merge</span>(
-    <span class="fn">mergeSort</span>(arr.slice(<span class="num">0</span>, mid)),
-    <span class="fn">mergeSort</span>(arr.slice(mid))
-  );
-}
-<span class="kw">function</span> <span class="fn">merge</span>(left, right) {
-  <span class="kw">const</span> res = []; <span class="kw">let</span> i = <span class="num">0</span>, j = <span class="num">0</span>;
-  <span class="kw">while</span> (i < left.length && j < right.length)
-    res.push(left[i] <= right[j] ? left[i++] : right[j++]);
-  <span class="kw">return</span> [...res, ...left.slice(i), ...right.slice(j)];
-}`,
-quick:`<span class="kw">async function</span> <span class="fn">quickSort</span>(arr, lo, hi) {
-  <span class="kw">if</span> (lo < hi) {
-    <span class="kw">const</span> pi = <span class="kw">await</span> <span class="fn">partition</span>(arr, lo, hi);
-    <span class="kw">await</span> <span class="fn">quickSort</span>(arr, lo, pi - <span class="num">1</span>);
-    <span class="kw">await</span> <span class="fn">quickSort</span>(arr, pi + <span class="num">1</span>, hi);
-  }
-}
-<span class="kw">async function</span> <span class="fn">partition</span>(arr, lo, hi) {
-  <span class="kw">const</span> pivot = arr[hi]; <span class="kw">let</span> i = lo - <span class="num">1</span>;
-  <span class="kw">for</span> (<span class="kw">let</span> j = lo; j < hi; j++) {
-    <span class="kw">if</span> (arr[j] <= pivot) {
-      i++; [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-  }
-  [arr[i+<span class="num">1</span>], arr[hi]] = [arr[hi], arr[i+<span class="num">1</span>]];
-  <span class="kw">return</span> i + <span class="num">1</span>;
-}`
-};
-function selectAlgo(name){currentAlgo=name;document.querySelectorAll('.algo-btn').forEach(b=>b.classList.remove('active'));document.getElementById('btn-'+name).classList.add('active');document.getElementById('code-title').textContent=`// ${name.charAt(0).toUpperCase()+name.slice(1)} Sort`;document.getElementById('code-display').innerHTML=CODES[name];}
-function generateArray(){N=parseInt(document.getElementById('size').value);document.getElementById('array-size').textContent=N;arr=Array.from({length:N},()=>Math.floor(Math.random()*90)+10);comparisons=0;swaps=0;document.getElementById('comparisons').textContent=0;document.getElementById('swaps').textContent=0;renderBars(arr,[],[],[]);document.getElementById('status').textContent='Array ready — press Sort';}
-function renderBars(a,comparing=[],swapping=[],sorted=[],pivot=-1,merging=[]){const chart=document.getElementById('bar-chart');const maxVal=Math.max(...a);chart.innerHTML='';a.forEach((v,i)=>{const bar=document.createElement('div');let cls='bar ';if(sorted.includes(i))cls+='sorted';else if(swapping.includes(i))cls+='swapping';else if(pivot===i)cls+='pivot';else if(merging.includes(i))cls+='merging';else if(comparing.includes(i))cls+='comparing';else cls+='normal';bar.className=cls;bar.style.height=`${(v/maxVal)*95}%`;chart.appendChild(bar);});}
-function getDelay(){const s=parseInt(document.getElementById('speed').value);document.getElementById('speed-lbl').textContent=s+'x';return Math.max(10,300-s*28);}
-function delay(ms){return new Promise(r=>setTimeout(r,ms));}
-async function startSort(){if(running)return;stopFlag=false;running=true;comparisons=0;swaps=0;document.getElementById('comparisons').textContent=0;document.getElementById('swaps').textContent=0;document.getElementById('status').innerHTML=`Running <span>${currentAlgo} sort</span>...`;const start=Date.now();if(currentAlgo==='bubble')await bubbleSort();else if(currentAlgo==='selection')await selectionSort();else if(currentAlgo==='insertion')await insertionSort();else if(currentAlgo==='merge')await mergeSortVis();else if(currentAlgo==='quick')await quickSortVis(0,arr.length-1);if(!stopFlag){renderBars(arr,[],[],arr.map((_,i)=>i));const ms=Date.now()-start;document.getElementById('status').innerHTML=`✓ Sorted in <span>${ms}ms</span> — <span>${comparisons}</span> comparisons, <span>${swaps}</span> swaps`;}running=false;}
-function stopSort(){stopFlag=true;running=false;document.getElementById('status').textContent='Stopped';}
-async function bubbleSort(){const n=arr.length;const sorted=[];for(let i=0;i<n-1;i++){let sw=false;for(let j=0;j<n-i-1;j++){if(stopFlag)return;comparisons++;document.getElementById('comparisons').textContent=comparisons;renderBars(arr,[j,j+1],[],[...sorted]);await delay(getDelay());if(arr[j]>arr[j+1]){[arr[j],arr[j+1]]=[arr[j+1],arr[j]];swaps++;document.getElementById('swaps').textContent=swaps;sw=true;}}sorted.push(n-1-i);if(!sw)break;}}
-async function selectionSort(){const n=arr.length;const sorted=[];for(let i=0;i<n-1;i++){let minIdx=i;for(let j=i+1;j<n;j++){if(stopFlag)return;comparisons++;document.getElementById('comparisons').textContent=comparisons;renderBars(arr,[j,minIdx],[],[...sorted]);await delay(getDelay());if(arr[j]<arr[minIdx])minIdx=j;}if(minIdx!==i){[arr[i],arr[minIdx]]=[arr[minIdx],arr[i]];swaps++;document.getElementById('swaps').textContent=swaps;}sorted.push(i);}sorted.push(arr.length-1);}
-async function insertionSort(){const n=arr.length;for(let i=1;i<n;i++){const key=arr[i];let j=i-1;while(j>=0&&arr[j]>key){if(stopFlag)return;comparisons++;document.getElementById('comparisons').textContent=comparisons;arr[j+1]=arr[j];j--;swaps++;document.getElementById('swaps').textContent=swaps;renderBars(arr,[j+1,i],[],[]);await delay(getDelay());}arr[j+1]=key;renderBars(arr,[],[],[...Array.from({length:i+1},(_,k)=>k)]);await delay(getDelay()/2);}}
-async function mergeSortVis(){async function ms(l,r){if(l>=r||stopFlag)return;const m=Math.floor((l+r)/2);await ms(l,m);await ms(m+1,r);await mergeParts(l,m,r);}async function mergeParts(l,m,r){const left=arr.slice(l,m+1),right=arr.slice(m+1,r+1);let i=0,j=0,k=l;while(i<left.length&&j<right.length){if(stopFlag)return;comparisons++;document.getElementById('comparisons').textContent=comparisons;const mi=Array.from({length:r-l+1},(_,x)=>l+x);renderBars(arr,[],[],[],- 1,mi);await delay(getDelay());if(left[i]<=right[j])arr[k++]=left[i++];else{arr[k++]=right[j++];swaps++;document.getElementById('swaps').textContent=swaps;}}while(i<left.length)arr[k++]=left[i++];while(j<right.length)arr[k++]=right[j++];}await ms(0,arr.length-1);}
-async function quickSortVis(lo,hi){if(lo>=hi||stopFlag)return;const pi=await partition(lo,hi);await quickSortVis(lo,pi-1);await quickSortVis(pi+1,hi);}
-async function partition(lo,hi){const pivot=arr[hi];let i=lo-1;renderBars(arr,[],[],[],hi);await delay(getDelay());for(let j=lo;j<hi;j++){if(stopFlag)return lo;comparisons++;document.getElementById('comparisons').textContent=comparisons;renderBars(arr,[j,hi],[],[],hi);await delay(getDelay());if(arr[j]<=pivot){i++;[arr[i],arr[j]]=[arr[j],arr[i]];swaps++;document.getElementById('swaps').textContent=swaps;}}[arr[i+1],arr[hi]]=[arr[hi],arr[i+1]];swaps++;document.getElementById('swaps').textContent=swaps;return i+1;}
-document.getElementById('speed').addEventListener('input',()=>{document.getElementById('speed-lbl').textContent=document.getElementById('speed').value+'x';});
-selectAlgo('bubble');generateArray();
-</script>
+<footer class="footer">
+  <div class="container">
+      <div class="footer-content">
+          <div class="footer-brand">
+              <h3>Group B DSA</h3>
+              <p>The Legends</p>
+              <div class="footer-social">
+                  <a href="#"><i class="fab fa-twitter"></i></a>
+                  <a href="#"><i class="fab fa-facebook"></i></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-youtube"></i></a>
+              </div>
+          </div>
+          <div class="footer-links">
+              <h4>Quick Links</h4>
+              <ul>
+                  <li><a href="stack.html">Stacks</a></li>
+                  <li><a href="queue.html">Queues</a></li>
+                  <li><a href="linked-list.html">Linked Lists</a></li>
+                  <li><a href="tree.html">Binary Search Tree</a></li>
+                  <li><a href="graph.html">Graphs</a></li>
+                  <li><a href="sorting.html">Sorting</a></li>
+                  <li><a href="searching.html">Searching</a></li>
+              </ul>
+          </div>
+          <div class="footer-contact">
+              <h4>Contact</h4>
+              <p><i class="fas fa-map-marker-alt"></i> Makerere University, Jinja</p>
+              <p><i class="fas fa-phone"></i> +256 702 866 529</p>
+              <p><i class="fas fa-envelope"></i> litmustechsolutions@gmail.com</p>
+          </div>
+          <div class="footer-newsletter">
+              <h4>Stay Updated</h4>
+              <p>Subscribe for latest discussions and updates</p>
+              <form class="newsletter-form">
+                  <input type="email" placeholder="Your email address" required>
+                  <button type="submit"><i class="fas fa-paper-plane"></i></button>
+              </form>
+          </div>
+      </div>
+      <div class="footer-bottom">
+          <p>&copy; 2026 Litmus Tech Solutions. All Rights Reserved.</p>
+      </div>
+  </div>
+</footer>
+<script src="/scripts/sorting.js"></script>
 </body>
 </html>
