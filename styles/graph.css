@@ -6,7 +6,7 @@
 --accent:#c41d7f;
 --text:#1a1612;
 --muted:#7a7060;
---mono:'Space Mono',monospace;
+--mono:sans-serif,monospace;
 --sans:'Syne',sans-serif;
 --error:#cf1322;
 --warn:#d46b08;
@@ -37,9 +37,11 @@ body{
     font-size:calc(16px * var(--font-scale, 1));
 }
 body::before{
-    content:'';position:fixed;inset:0;
-    background-image:linear-gradient(rgba(0,0,0,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.05) 1px,transparent 1px);
-    background-size:40px 40px;pointer-events:none;z-index:0;
+    content:'';
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
     animation:gridMove 20s linear infinite;
 }
 @keyframes gridMove{
