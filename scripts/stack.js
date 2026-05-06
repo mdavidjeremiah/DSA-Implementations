@@ -8,12 +8,16 @@ class Stack {
   }
 
   pop() {
-    if (this.isEmpty()) throw new Error("Underflow");
+    if (this.isEmpty()) {
+      throw new Error("Stack Underflow");
+    } 
     return this.items.pop();
   }
 
   peek() {
-    if (this.isEmpty()) throw new Error("Empty");
+    if (this.isEmpty()){
+       throw new Error("Empty");
+    }
     return this.items[this.items.length - 1];
   }
 

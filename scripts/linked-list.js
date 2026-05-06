@@ -23,11 +23,11 @@ class LinkedList {
     if (!this.head) {
       this.head = n;
     } else {
-      let c = this.head;
-      while (c.next) {
-        c = c.next;
-        c.next = n;
+      let n = this.head;
+      while (n.next) {
+        n = n.next;
       }
+      n.next = n;
     }
     this.sz++;
   }

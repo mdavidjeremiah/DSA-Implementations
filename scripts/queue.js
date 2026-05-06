@@ -8,12 +8,16 @@ class Queue {
   }
 
   dequeue() {
-    if (this.isEmpty()) throw new Error("Underflow");
+    if (this.isEmpty()) {
+      throw new Error("Underflow");
+    } 
     return this.items.shift();
   }
 
   front() {
-    if (this.isEmpty()) throw new Error("Empty");
+    if (this.isEmpty()) {
+      throw new Error("Empty");
+    }
     return this.items[0];
   }
 
