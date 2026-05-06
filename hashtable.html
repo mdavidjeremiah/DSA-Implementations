@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hash Table — DS&A Visual Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles/hashtable.css">
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="index.html">DS&A Lab</a><span class="sep">/</span><span class="cur">Hash Table</span></nav>
+  <div style="margin-bottom:2.5rem;">
+    <div class="badge">DATA STRUCTURE  08</div>
+    <h1>Hash <span>Table</span></h1>
+    <p class="desc">A key-value store using a hash function to compute bucket indices. Collisions are resolved via chaining (linked lists at each bucket). Average O(1) insert, search &amp; delete.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"> Insert / Update</div>
+    <div class="input-row">
+      <input type="text" id="ht-key" placeholder="Key..." style="width:140px;"/>
+      <input type="text" id="ht-val" placeholder="Value..." style="width:140px;"/>
+      <button class="btn" onclick="htInsert()">insert()</button>
+      <button class="btn g" onclick="seedData()">Load Sample</button>
+      <button class="btn r" onclick="htClear()">clear()</button>
+    </div>
+    <div class="status-bar" id="ht-status">Enter a key-value pair and press Insert</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"> Search / Delete</div>
+    <div class="input-row">
+      <input type="text" id="ht-search" placeholder="Search key..." style="width:180px;"/>
+      <button class="btn" onclick="htSearch()">search()</button>
+      <button class="btn r" onclick="htDelete()">delete()</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"> Bucket Visualization — size = 11 (prime)</div>
+    <div class="ht-grid" id="ht-grid"></div>
+    <div style="margin-top:1rem;" class="step-log" id="ht-log"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"> Hash Table Code</div>
+      <div class="code-block"><span class="kw">class</span> <span class="fn">HashTable</span> {
+  <span class="fn">constructor</span>(size = <span class="num">11</span>) {
+    <span class="kw">this</span>.size = size;
+    <span class="kw">this</span>.table = <span class="fn">Array</span>.from(
+      { length: size }, () => []
+    );
+  }
+
+  <span class="fn">hash</span>(key) {
+    <span class="kw">let</span> h = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="kw">let</span> c <span class="kw">of</span> key)
+      h = (h * <span class="num">31</span> + c.charCodeAt(<span class="num">0</span>)) % <span class="kw">this</span>.size;
+    <span class="kw">return</span> h;
+  }
+
+  <span class="fn">insert</span>(key, val) {
+    <span class="kw">const</span> idx = <span class="kw">this</span>.<span class="fn">hash</span>(key);
+    <span class="kw">const</span> bucket = <span class="kw">this</span>.table[idx];
+    <span class="kw">const</span> ex = bucket.<span class="fn">findIndex</span>(([k]) => k === key);
+    <span class="kw">if</span> (ex !== -<span class="num">1</span>) bucket[ex][<span class="num">1</span>] = val;
+    <span class="kw">else</span> bucket.<span class="fn">push</span>([key, val]);
+  }
+
+  <span class="fn">search</span>(key) {
+    <span class="kw">const</span> idx = <span class="kw">this</span>.<span class="fn">hash</span>(key);
+    <span class="kw">return</span> <span class="kw">this</span>.table[idx].<span class="fn">find</span>(([k]) => k === key)?.[<span class="num">1</span>];
+  }
+
+  <span class="fn">delete</span>(key) {
+    <span class="kw">const</span> idx = <span class="kw">this</span>.<span class="fn">hash</span>(key);
+    <span class="kw">this</span>.table[idx] = <span class="kw">this</span>.table[idx].<span class="fn">filter</span>(([k]) => k !== key);
+  }
+}</div>
+    </div>
+    
+
+  <div class="panel">
+    <div class="panel-title"> Complexity Analysis</div>
+    <table class="complexity-table">
+      <tr><th>Operation</th><th>Average</th><th>Worst</th><th>Notes</th></tr>
+      <tr><td>Insert</td><td class="good">O(1)</td><td class="bad">O(n)</td><td>Worst if all keys hash to same bucket</td></tr>
+      <tr><td>Search</td><td class="good">O(1)</td><td class="bad">O(n)</td><td>Depends on load factor and hash quality</td></tr>
+      <tr><td>Delete</td><td class="good">O(1)</td><td class="bad">O(n)</td><td>Chain traversal in worst case</td></tr>
+      <tr><td>Space</td><td class="mid">O(n)</td><td class="mid">O(n)</td><td>n = total stored entries</td></tr>
+    </table>
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>Group B DSA</h3>
+        <p>The Legends</p>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="stack.html">Stacks</a></li>
+          <li><a href="queue.html">Queues</a></li>
+          <li><a href="linked-list.html">Linked Lists</a></li>
+          <li><a href="tree.html">Binary Search Tree</a></li>
+          <li><a href="graph.html">Graphs</a></li>
+          <li><a href="sorting.html">Sorting</a></li>
+          <li><a href="searching.html">Searching</a></li>
+          <li><a href="hashtable.html">Hash Table</a></li>
+          <li><a href="interpolation-search.html">Interpolation Search</a></li>
+          <li><a href="recursion.html">Recursion</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p><i class="fas fa-map-marker-alt"></i> Makerere University, Jinja</p>
+        <p><i class="fas fa-phone"></i> +256 702 866 529</p>
+        <p><i class="fas fa-envelope"></i> litmustechsolutions@gmail.com</p>
+      </div>
+      <div class="footer-newsletter">
+        <h4>Stay Updated</h4>
+        <p>Subscribe for latest discussions and updates</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Your email address" required>
+          <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Litmus Tech Solutions. All Rights Reserved.</p>
+    </div>
+  </div>
+</footer>
+<script src="scripts/hashtable.js"></script>
+</body>
+</html>

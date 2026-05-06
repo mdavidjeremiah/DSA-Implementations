@@ -18,8 +18,8 @@
         <h1>Data Structures<br/>&amp; <span class="accent">Algorithms</span></h1>
       </div>
       <div class="stats">
-        <div class="stat"><div class="stat-num">6</div><div class="stat-label">structures</div></div>
-        <div class="stat"><div class="stat-num">8</div><div class="stat-label">algorithms</div></div>
+        <div class="stat"><div class="stat-num">7</div><div class="stat-label">structures</div></div>
+        <div class="stat"><div class="stat-num">11</div><div class="stat-label">algorithms</div></div>
       </div>
     </div>
   </header>
@@ -56,21 +56,39 @@
       <p>Vertices connected by edges. Directed &amp; undirected. Adjacency list representation. BFS and DFS traversal built in.</p>
       <div class="card-ops"><span class="op-chip highlight">addVertex()</span><span class="op-chip highlight">addEdge()</span><span class="op-chip highlight">BFS()</span><span class="op-chip">DFS()</span><span class="op-chip">removeEdge()</span></div>
     </a>
+    <a href="hashtable.html" class="card" style="--accent:var(--purple)">
+      <div class="card-top"><div class="card-icon">6</div><div class="card-tag">KEY-VALUE</div><div class="card-arrow">↗</div></div>
+      <h3>Hash Table</h3>
+      <p>Key-value store with O(1) average access. Polynomial rolling hash maps keys to buckets. Collisions resolved via chaining. Visualize hash, insert, search &amp; delete live.</p>
+      <div class="card-ops"><span class="op-chip highlight">insert()</span><span class="op-chip highlight">search()</span><span class="op-chip highlight">delete()</span><span class="op-chip">hash()</span><span class="op-chip">chain()</span></div>
+    </a>
   </div>
 
   <div class="section-label" style="margin-top:3rem;">02 — Searching &amp; Sorting Algorithms</div>
   <div class="cards-grid">
     <a href="searching.html" class="card" style="--accent:var(--gold)">
-      <div class="card-top"><div class="card-icon">6</div><div class="card-tag">SEARCHING</div><div class="card-arrow">↗</div></div>
+      <div class="card-top"><div class="card-icon">7</div><div class="card-tag">SEARCHING</div><div class="card-arrow">↗</div></div>
       <h3>Searching Algorithms</h3>
       <p>Linear O(n) vs Binary O(log n) search. Step-by-step animations showing comparisons &amp; index tracking.</p>
       <div class="card-ops"><span class="op-chip highlight">linearSearch()</span><span class="op-chip highlight">binarySearch()</span></div>
     </a>
+    <a href="interpolation-search.html" class="card" style="--accent:var(--pink)">
+      <div class="card-top"><div class="card-icon">8</div><div class="card-tag">SEARCHING</div><div class="card-arrow">↗</div></div>
+      <h3>Interpolation Search</h3>
+      <p>Smarter than binary: estimates probe position proportionally using value distribution. O(log log n) average on uniform data. Watch the formula compute each step.</p>
+      <div class="card-ops"><span class="op-chip highlight">interpolationSearch()</span><span class="op-chip">probe()</span><span class="op-chip">compare()</span></div>
+    </a>
     <a href="sorting.html" class="card" style="--accent:var(--green)">
-      <div class="card-top"><div class="card-icon">7</div><div class="card-tag">SORTING</div><div class="card-arrow">↗</div></div>
+      <div class="card-top"><div class="card-icon">9</div><div class="card-tag">SORTING</div><div class="card-arrow">↗</div></div>
       <h3>Sorting Algorithms</h3>
       <p>Bubble, Selection, Insertion, Merge &amp; Quick Sort visualized with bar charts. Compare speeds &amp; trace operations.</p>
       <div class="card-ops"><span class="op-chip highlight">bubbleSort()</span><span class="op-chip highlight">mergeSort()</span><span class="op-chip highlight">quickSort()</span><span class="op-chip">insertionSort()</span><span class="op-chip">selectionSort()</span></div>
+    </a>
+    <a href="recursion.html" class="card" style="--accent:var(--red)">
+      <div class="card-top"><div class="card-icon">10</div><div class="card-tag">RECURSION</div><div class="card-arrow">↗</div></div>
+      <h3>Recursion &amp; Memoization</h3>
+      <p>Fibonacci and Factorial as animated call trees. Compare O(2ⁿ) plain recursion with O(n) memoized — watch the cache eliminate duplicate subtrees in real time.</p>
+      <div class="card-ops"><span class="op-chip highlight">fib()</span><span class="op-chip highlight">factorial()</span><span class="op-chip highlight">fibMemo()</span><span class="op-chip">factMemo()</span></div>
     </a>
   </div>
 
@@ -111,8 +129,11 @@
                         <li><a href="linked-list.html">Linked Lists</a></li>
                         <li><a href="tree.html">Binary Search Tree</a></li>
                         <li><a href="graph.html">Graphs</a></li>
+                        <li><a href="hashtable.html">Hash Table</a></li>
                         <li><a href="sorting.html">Sorting</a></li>
                         <li><a href="searching.html">Searching</a></li>
+                        <li><a href="interpolation-search.html">Interpolation Search</a></li>
+                        <li><a href="recursion.html">Recursion</a></li>
                     </ul>
                 </div>
                 <div class="footer-contact">

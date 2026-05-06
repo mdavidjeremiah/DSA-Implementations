@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Recursion — DS&A Visual Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles/recursion.css">
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="index.html">DS&A Lab</a><span class="sep">/</span><span class="cur">Recursion</span></nav>
+  <div style="margin-bottom:2.5rem;">
+    <div class="badge">ALGORITHMS  10</div>
+    <h1>Recursion &amp; <span>Memoization</span></h1>
+    <p class="desc">Visualize Fibonacci and Factorial as recursive call trees. Compare plain recursion (exponential calls) with memoization (cache-driven, linear calls). Watch the tree build in real time, then see the cache eliminate duplicate subtrees.</p>
+  </div>
+
+  <!-- FIBONACCI PLAIN -->
+  <div class="panel">
+    <div class="panel-title"> Fibonacci — Plain Recursion (no cache)</div>
+    <div class="input-row">
+      <input type="number" id="fib-n" value="6" min="0" max="10" placeholder="n (0–10)"/>
+      <button class="btn" onclick="runFib()">Visualize</button>
+    </div>
+    <div class="status-bar" id="fib-status">Enter n ≤ 10 and press Visualize</div>
+    <div class="tree-wrap" id="fib-tree"></div>
+    <div class="stats-row">
+      <div class="stat-item"><span class="stat-val" id="fib-stats-calls">—</span><span>total calls</span></div>
+      <div class="stat-item"><span class="stat-val" id="fib-stats-result">—</span><span>result</span></div>
+    </div>
+    <div style="margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-bottom:0.4rem;">SEQUENCE</div>
+      <div class="seq-display" id="fib-seq"></div>
+    </div>
+    <div style="margin-top:1rem;" class="call-log" id="fib-log"></div>
+  </div>
+
+  <!-- FIBONACCI MEMOIZED -->
+  <div class="panel">
+    <div class="panel-title"> Fibonacci — Memoized (top-down DP)</div>
+    <div class="input-row">
+      <input type="number" id="fib-memo-n" value="8" min="0" max="30" placeholder="n (0–30)"/>
+      <button class="btn g" onclick="runFibMemo()">Visualize</button>
+    </div>
+    <div class="status-bar" id="fib-memo-status">Enter n ≤ 30 and press Visualize</div>
+    <div class="tree-wrap" id="fib-memo-tree"></div>
+    <div class="stats-row">
+      <div class="stat-item"><span class="stat-val" id="fib-memo-stats-calls">—</span><span>total calls</span></div>
+      <div class="stat-item"><span class="stat-val green" id="fib-memo-stats-hits">—</span><span>cache hits</span></div>
+      <div class="stat-item"><span class="stat-val" id="fib-memo-stats-result">—</span><span>result</span></div>
+    </div>
+    <div style="margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-bottom:0.4rem;">MEMO CACHE</div>
+      <div class="memo-grid" id="fib-memo-grid"></div>
+    </div>
+    <div style="margin-top:1rem;" class="call-log" id="fib-memo-log"></div>
+  </div>
+
+  <!-- FACTORIAL PLAIN -->
+  <div class="panel">
+    <div class="panel-title"> Factorial — Plain Recursion</div>
+    <div class="input-row">
+      <input type="number" id="fact-n" value="5" min="0" max="10" placeholder="n (0–10)"/>
+      <button class="btn b" onclick="runFact()">Visualize</button>
+    </div>
+    <div class="status-bar" id="fact-status">Enter n ≤ 10 and press Visualize</div>
+    <div class="tree-wrap" id="fact-tree"></div>
+    <div class="stats-row">
+      <div class="stat-item"><span class="stat-val" id="fact-stats-calls">—</span><span>total calls</span></div>
+      <div class="stat-item"><span class="stat-val" id="fact-stats-result">—</span><span>result</span></div>
+    </div>
+    <div style="margin-top:1rem;" class="call-log" id="fact-log"></div>
+  </div>
+
+  <!-- FACTORIAL MEMOIZED -->
+  <div class="panel">
+    <div class="panel-title"> Factorial — Memoized</div>
+    <div class="input-row">
+      <input type="number" id="fact-memo-n" value="7" min="0" max="20" placeholder="n (0–20)"/>
+      <button class="btn g" onclick="runFactMemo()">Visualize</button>
+    </div>
+    <div class="status-bar" id="fact-memo-status">Enter n ≤ 20 and press Visualize</div>
+    <div class="tree-wrap" id="fact-memo-tree"></div>
+    <div class="stats-row">
+      <div class="stat-item"><span class="stat-val" id="fact-memo-stats-calls">—</span><span>total calls</span></div>
+      <div class="stat-item"><span class="stat-val green" id="fact-memo-stats-hits">—</span><span>cache hits</span></div>
+      <div class="stat-item"><span class="stat-val" id="fact-memo-stats-result">—</span><span>result</span></div>
+    </div>
+    <div style="margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-bottom:0.4rem;">MEMO CACHE</div>
+      <div class="memo-grid" id="fact-memo-grid"></div>
+    </div>
+    <div style="margin-top:1rem;" class="call-log" id="fact-memo-log"></div>
+  </div>
+
+  <!-- CODE PANELS -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"> Fibonacci Code</div>
+      <div class="code-block"><span class="kw">function</span> <span class="fn">fib</span>(n) {
+  <span class="kw">if</span> (n <= <span class="num">1</span>) <span class="kw">return</span> n;
+  <span class="kw">return</span> <span class="fn">fib</span>(n - <span class="num">1</span>) + <span class="fn">fib</span>(n - <span class="num">2</span>);
+}
+
+<span class="kw">function</span> <span class="fn">fibMemo</span>(n, memo = {}) {
+  <span class="kw">if</span> (n <span class="kw">in</span> memo) <span class="kw">return</span> memo[n];
+  <span class="kw">if</span> (n <= <span class="num">1</span>) <span class="kw">return</span> n;
+  memo[n] = <span class="fn">fibMemo</span>(n - <span class="num">1</span>, memo)
+           + <span class="fn">fibMemo</span>(n - <span class="num">2</span>, memo);
+  <span class="kw">return</span> memo[n];
+}</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"> Factorial Code</div>
+      <div class="code-block"><span class="kw">function</span> <span class="fn">factorial</span>(n) {
+  <span class="kw">if</span> (n <= <span class="num">0</span>) <span class="kw">return</span> <span class="num">1</span>;
+  <span class="kw">return</span> n * <span class="fn">factorial</span>(n - <span class="num">1</span>);
+}
+
+<span class="kw">function</span> <span class="fn">factMemo</span>(n, memo = {}) {
+  <span class="kw">if</span> (n <span class="kw">in</span> memo) <span class="kw">return</span> memo[n];
+  <span class="kw">if</span> (n <= <span class="num">0</span>) <span class="kw">return</span> memo[<span class="num">0</span>] = <span class="num">1</span>;
+  memo[n] = n * <span class="fn">factMemo</span>(n - <span class="num">1</span>, memo);
+  <span class="kw">return</span> memo[n];
+}</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"> Complexity Comparison</div>
+    <table class="complexity-table">
+      <tr><th>Function</th><th>Approach</th><th>Time</th><th>Space</th></tr>
+      <tr><td>fib(n)</td><td>Plain recursion</td><td class="bad">O(2ⁿ)</td><td class="bad">O(n) stack</td></tr>
+      <tr><td>fib(n)</td><td>Memoized</td><td class="good">O(n)</td><td class="good">O(n) cache</td></tr>
+      <tr><td>factorial(n)</td><td>Plain recursion</td><td class="good">O(n)</td><td class="good">O(n) stack</td></tr>
+      <tr><td>factorial(n)</td><td>Memoized</td><td class="good">O(n)</td><td class="good">O(n) cache</td></tr>
+    </table>
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>Group B DSA</h3>
+        <p>The Legends</p>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="stack.html">Stacks</a></li>
+          <li><a href="queue.html">Queues</a></li>
+          <li><a href="linked-list.html">Linked Lists</a></li>
+          <li><a href="tree.html">Binary Search Tree</a></li>
+          <li><a href="graph.html">Graphs</a></li>
+          <li><a href="sorting.html">Sorting</a></li>
+          <li><a href="searching.html">Searching</a></li>
+          <li><a href="hashtable.html">Hash Table</a></li>
+          <li><a href="interpolation-search.html">Interpolation Search</a></li>
+          <li><a href="recursion.html">Recursion</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p><i class="fas fa-map-marker-alt"></i> Makerere University, Jinja</p>
+        <p><i class="fas fa-phone"></i> +256 702 866 529</p>
+        <p><i class="fas fa-envelope"></i> litmustechsolutions@gmail.com</p>
+      </div>
+      <div class="footer-newsletter">
+        <h4>Stay Updated</h4>
+        <p>Subscribe for latest discussions and updates</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Your email address" required>
+          <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Litmus Tech Solutions. All Rights Reserved.</p>
+    </div>
+  </div>
+</footer>
+<script src="scripts/recursion.js"></script>
+</body>
+</html>

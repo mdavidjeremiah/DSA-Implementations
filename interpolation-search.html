@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Interpolation Search — DS&A Visual Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles/interpolation-search.css">
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="index.html">DS&A Lab</a><span class="sep">/</span><span class="cur">Interpolation Search</span></nav>
+  <div style="margin-bottom:2.5rem;">
+    <div class="badge">ALGORITHMS  09</div>
+    <h1>Interpolation <span>Search</span></h1>
+    <p class="desc">An improved binary search for uniformly distributed sorted arrays. Instead of always picking the midpoint, it estimates the target's position proportionally — like how you'd look up a word in a dictionary. Average O(log log n), worst O(n).</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"> Live Visualization — Interpolation Search</div>
+    <div class="input-row">
+      <input type="number" id="is-target" placeholder="Target value..." style="width:160px;"/>
+      <button class="btn" onclick="startInterpolation()"> Search</button>
+      <button class="btn b" onclick="resetArr()">Reset</button>
+      <button class="btn g" onclick="generateArr()">New Array</button>
+    </div>
+    <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-bottom:0.5rem;">
+      <span style="color:var(--blue)"> LOW</span> &nbsp;|&nbsp; <span style="color:var(--accent)">◆ PROBE (estimated position)</span> &nbsp;|&nbsp; <span style="color:var(--error)"> HIGH</span>
+    </div>
+    <div class="array-display" id="is-array"></div>
+    <div class="probe-bar" id="is-formula">
+      <span class="formula">pos = low + ⌊((target − arr[low]) / (arr[high] − arr[low])) × (high − low)⌋</span>
+    </div>
+    <div class="status-bar" id="is-status">Enter a target and press Search</div>
+    <div class="step-log" id="is-log"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"> Interpolation Search Code</div>
+      <div class="code-block"><span class="kw">function</span> <span class="fn">interpolationSearch</span>(arr, target) {
+  <span class="kw">let</span> low = <span class="num">0</span>, high = arr.length - <span class="num">1</span>;
+
+  <span class="kw">while</span> (low <= high
+      && target >= arr[low]
+      && target <= arr[high]) {
+
+    <span class="kw">if</span> (arr[low] === arr[high]) {
+      <span class="kw">return</span> arr[low] === target ? low : -<span class="num">1</span>;
+    }
+
+    <span class="kw">const</span> probe = low + Math.<span class="fn">floor</span>(
+      ((target - arr[low]) /
+       (arr[high] - arr[low])) * (high - low)
+    );
+
+    <span class="kw">if</span> (arr[probe] === target) <span class="kw">return</span> probe;
+    <span class="kw">else if</span> (arr[probe] < target) low = probe + <span class="num">1</span>;
+    <span class="kw">else</span> high = probe - <span class="num">1</span>;
+  }
+
+  <span class="kw">return</span> -<span class="num">1</span>;
+}</div>
+    </div>
+    
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"> Complexity Comparison</div>
+    <table class="complexity-table">
+      <tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Requires</th></tr>
+      <tr><td>Linear Search</td><td class="good">O(1)</td><td class="bad">O(n)</td><td class="bad">O(n)</td><td>Nothing</td></tr>
+      <tr><td>Binary Search</td><td class="good">O(1)</td><td class="good">O(log n)</td><td class="good">O(log n)</td><td>Sorted array</td></tr>
+      <tr><td>Interpolation Search</td><td class="good">O(1)</td><td class="good">O(log log n)</td><td class="bad">O(n)</td><td>Sorted + uniform</td></tr>
+    </table>
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>Group B DSA</h3>
+        <p>The Legends</p>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="stack.html">Stacks</a></li>
+          <li><a href="queue.html">Queues</a></li>
+          <li><a href="linked-list.html">Linked Lists</a></li>
+          <li><a href="tree.html">Binary Search Tree</a></li>
+          <li><a href="graph.html">Graphs</a></li>
+          <li><a href="sorting.html">Sorting</a></li>
+          <li><a href="searching.html">Searching</a></li>
+          <li><a href="hashtable.html">Hash Table</a></li>
+          <li><a href="interpolation-search.html">Interpolation Search</a></li>
+          <li><a href="recursion.html">Recursion</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p><i class="fas fa-map-marker-alt"></i> Makerere University, Jinja</p>
+        <p><i class="fas fa-phone"></i> +256 702 866 529</p>
+        <p><i class="fas fa-envelope"></i> litmustechsolutions@gmail.com</p>
+      </div>
+      <div class="footer-newsletter">
+        <h4>Stay Updated</h4>
+        <p>Subscribe for latest discussions and updates</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Your email address" required>
+          <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Litmus Tech Solutions. All Rights Reserved.</p>
+    </div>
+  </div>
+</footer>
+<script src="scripts/interpolation-search.js"></script>
+</body>
+</html>
